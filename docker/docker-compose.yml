@@ -18,7 +18,7 @@ services:
       - "./docker-init:/docker-entrypoint-initaws.d"
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
-  
+
   postgres:
     image: postgres:14-alpine
     ports:
