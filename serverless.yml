@@ -1,0 +1,101 @@
+org: victorsouto
+
+app: mikkoapp
+
+service: mikkoapi
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  timeout: 900
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+            - sqs:DeleteMessage
+            - sqs:GetQueueUrl
+            - sqs:ReceiveMessage
+            - sqs:GetQueueAttributes
+          Resource:
+            - !GetAtt CategorizeExtractQueue.Arn
+  environment:
+    CATEGORIZE_EXTRACT_QUEUE_URL: !GetAtt CategorizeExtractQueue.QueueUrl
+    SNS_TOPIC_ARN: !Ref NotificationsTopic
+    S3_BUCKET_NAME: !Ref MikkoBucket
+    DATABASE_URL: ${env:DATABASE_URL}
+
+package:
+  individually: true
+
+build:
+  esbuild:
+    bundle: true
+    exclude:
+      - '@aws-sdk/*'
+      - 'mock-aws-s3'
+      - 'pino-pretty'
+      - '!@aws-sdk/client-bedrock-runtime'
+    buildConcurrency: 3
+    minify: false
+    sourcemap:
+      type: linked
+      setNodeOptions: true
+   
+functions:
+  categorize-extract:
+    handler: src/infra/queues/categorize-extract/handler.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [CategorizeExtractQueue, Arn]
+          batchSize: 3
+          enabled: true
+          functionResponseType: ReportBatchItemFailures
+  onboarding:
+    handler: src/infra/routes/onboarding/handler.handler
+    events:
+      - httpApi:
+          path: /onboarding/{proxy+}
+          method: ANY
+  user:
+    handler: src/infra/routes/user/handler.handler
+    events:
+      - httpApi:
+          path: /users/{proxy+}
+          method: ANY
+  transaction:
+    handler: src/infra/routes/transaction/handler.handler
+    events:
+      - httpApi:
+          path: /transactions/{proxy+}
+          method: ANY
+
+resources:
+  Resources:
+    # SQS Queue
+    CategorizeExtractQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: categorize-extract-${opt:stage, 'prod'}
+        VisibilityTimeout: 900
+        MessageRetentionPeriod: 345600
+    
+    # SNS Topic
+    NotificationsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: notifications-topic-${opt:stage, 'prod'}
+    
+    # S3 Bucket
+    MikkoBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: mikko-bucket-${opt:stage, 'prod'}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders: ['*']
+              AllowedMethods: [GET, PUT, POST, DELETE, HEAD]
+              AllowedOrigins: ['*']
+              MaxAge: 3000

@@ -1,0 +1,20 @@
+{
+  "Records": [
+    {
+      "messageId": "test-message-id",
+      "receiptHandle": "test-receipt-handle",
+      "body": "{\"categorizeExtractId\":\"e0abf21d-d583-47ac-814b-ad5895a7a11e\",\"onboardingId\":\"81838601-8d2e-4d9d-b35d-6ccae49016a6\"}",
+      "attributes": {
+        "ApproximateReceiveCount": "1",
+        "SentTimestamp": "1605544528378",
+        "SenderId": "000000000000",
+        "ApproximateFirstReceiveTimestamp": "1605544528378"
+      },
+      "messageAttributes": {},
+      "md5OfBody": "e2f6f1a913a7154c68b0d0e2df4d4899",
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:us-east-1:000000000000:categorize-extract-dev",
+      "awsRegion": "us-east-1"
+    }
+  ]
+}
