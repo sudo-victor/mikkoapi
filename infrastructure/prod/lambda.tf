@@ -86,6 +86,14 @@ resource "aws_lambda_function" "transaction" {
 resource "aws_apigatewayv2_api" "api" {
   name          = "${local.name_prefix}-api"
   protocol_type = "HTTP"
+  
+  cors_configuration {
+    allow_credentials = true
+    allow_headers     = ["Content-Type", "Authorization"]
+    allow_methods     = ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"]
+    allow_origins     = ["http://localhost:3000", "https://mikkoapp.com"]
+    max_age          = 86400
+  }
 }
 
 # API Gateway Integrations

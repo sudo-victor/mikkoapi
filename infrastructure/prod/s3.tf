@@ -6,9 +6,9 @@ resource "aws_s3_bucket_cors_configuration" "mikko" {
   bucket = aws_s3_bucket.mikko.id
 
   cors_rule {
-    allowed_headers = ["*"]
+    allowed_headers = ["Content-Type", "Authorization"]
     allowed_methods = ["GET", "PUT", "POST", "DELETE", "HEAD"]
-    allowed_origins = ["*"]
+    allowed_origins = ["http://localhost:3000", "https://mikkoapp.com"]
     max_age_seconds = 3000
   }
 }

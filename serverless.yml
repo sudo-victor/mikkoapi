@@ -59,18 +59,63 @@ functions:
       - httpApi:
           path: /onboarding/{proxy+}
           method: ANY
+          cors:
+            allowOrigins:
+              - http://localhost:3000
+              - https://mikkoapp.com
+            allowHeaders:
+              - Content-Type
+              - Authorization
+            allowMethods:
+              - GET
+              - POST
+              - PATCH
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowCredentials: true
   user:
     handler: src/infra/routes/user/handler.handler
     events:
       - httpApi:
           path: /users/{proxy+}
           method: ANY
+          cors:
+            allowOrigins:
+              - http://localhost:3000
+              - https://mikkoapp.com
+            allowHeaders:
+              - Content-Type
+              - Authorization
+            allowMethods:
+              - GET
+              - POST
+              - PATCH
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowCredentials: true
   transaction:
     handler: src/infra/routes/transaction/handler.handler
     events:
       - httpApi:
           path: /transactions/{proxy+}
           method: ANY
+          cors:
+            allowOrigins:
+              - http://localhost:3000
+              - https://mikkoapp.com
+            allowHeaders:
+              - Content-Type
+              - Authorization
+            allowMethods:
+              - GET
+              - POST
+              - PATCH
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowCredentials: true
 
 resources:
   Resources:
@@ -95,7 +140,9 @@ resources:
         BucketName: mikko-bucket-${opt:stage, 'prod'}
         CorsConfiguration:
           CorsRules:
-            - AllowedHeaders: ['*']
+            - AllowedHeaders: ['Content-Type', 'Authorization']
               AllowedMethods: [GET, PUT, POST, DELETE, HEAD]
-              AllowedOrigins: ['*']
+              AllowedOrigins: 
+                - 'http://localhost:3000'
+                - 'https://mikkoapp.com'
               MaxAge: 3000

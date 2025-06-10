@@ -1,5 +1,7 @@
 import express from "express";
 import serverless from "serverless-http";
+import cors from 'cors';
+import compression from 'compression';
 
 import {
 	categorizeExtractByOnboardingIdController,
@@ -13,6 +15,17 @@ import {
 
 const app = express();
 app.use(express.json());
+app.use(cors({
+	origin: [
+		'http://localhost:3000',
+		'https://mikkoapp.com',
+
+	],
+	credentials: true,
+	methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+	allowedHeaders: ['Content-Type', 'Authorization']
+}))
+app.use(compression())
 
 app.post("/onboarding/start", startOnboardingController);
 app.get("/onboarding/details", getOnboardingController);

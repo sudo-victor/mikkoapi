@@ -65,7 +65,7 @@ resource "aws_db_instance" "postgres" {
 
   # Engine
   engine         = "postgres"
-  engine_version = "15.8"
+  engine_version = "15.12"
   instance_class = "db.t4g.micro"  # ARM instance, cheaper than x86
 
   # Storage
